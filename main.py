@@ -203,7 +203,7 @@ class MainFuntion:
         _, _, history = self.out
         start = [history[0]]
         path = [history[-1]]
-        BackH = history[::-1]
+        BackH = history[::-1]           # Reverse of History
         for i in path:
             N = self.get_neighbors(i)
             if self.verbose > 1:
