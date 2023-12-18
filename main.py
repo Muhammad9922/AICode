@@ -43,25 +43,25 @@ class MainFuntion:
         self.Environment = Environment  # Setting the Environment
 
         # Printing Info:
-        if self.verbose == 0:
+        if self.verbose == 0:                           # If verbose is 0
             print("Starting....")
-        elif self.verbose == 1:
+        elif self.verbose == 1:                         # If verbose is 1
             Time = time.localtime()
-            print(f"Starting at {Time[3]}:{Time[4]}:{Time[5]}; {Time[2]}-{Time[1]}-{Time[0]}")
-            print(f"Mode: {module}")
-        elif self.verbose == 3:
+            print(f"Starting at {Time[3]}:{Time[4]}:{Time[5]}; {Time[2]}-{Time[1]}-{Time[0]}")      # Time
+            print(f"Mode: {module}")                                                                # Module
+        elif self.verbose == 3:                         # If verbose is 3
             Time = time.localtime()
-            print(f"Starting at {Time[3]}:{Time[4]}:{Time[5]}; {Time[2]}-{Time[1]}-{Time[0]}")
-            print(f"Mode: {module}")
+            print(f"Starting at {Time[3]}:{Time[4]}:{Time[5]}; {Time[2]}-{Time[1]}-{Time[0]}")      # Time
+            print(f"Mode: {module}")                                                                # Module
             print("\n\n\n")
-            print(Environment)
+            print(Environment)                                                                      # Maze
             print("\n\n\n")
-            print("Initial Position Of Agent: " + str(self.InitialPosition))
-            print("Number of Goals: " + str(self.num_goal))
-            print("Positions of Goals: " + str(self.Position_Of_Goals))
+            print("Initial Position Of Agent: " + str(self.InitialPosition))                        # InitialPosition
+            print("Number of Goals: " + str(self.num_goal))                                         # Number of Goals
+            print("Positions of Goals: " + str(self.Position_Of_Goals))                             # Positions of Goals
             print("\n\n\n")
         else:
-            print("Verbose Error")
+            print("Verbose Error")                                                                  # Some Error
 
         # Setting Algorithm
         if self.module.lower() == 'bfs':
