@@ -260,18 +260,18 @@ class MainFuntion:
         :raises: NoPathFound: If the frontier is empty with the goal not found
         :returns: Goals, Frames, History
         """
-        Frontier = []
-        History = []
-        Goals = []
-        Frames = []
-        Env = copy.deepcopy(Environment)
-        Frames.append(np.array(copy.deepcopy(Env)))
-        Frontier.append(initialPosition)
-        while numberOfGoal != 0:
-            try:
+        Frontier = []                                           # Initializing Frontier
+        History = []                                            # Initializing History
+        Goals = []                                              # Initializing Goals
+        Frames = []                                             # Initializing Frames
+        Env = copy.deepcopy(Environment)                        # Deep-copying Environment
+        Frames.append(np.array(copy.deepcopy(Env)))             # Appending Frames
+        Frontier.append(initialPosition)                        # Appending Frontier
+        while numberOfGoal != 0:                                # Unless the Goals are zero
+            try:                                                # Check if the Frontier is Null
                 Now = Frontier[-1]
             except IndexError:
-                raise Errors.NoPathFound()
+                raise Errors.NoPathFound()                      # If the Frontier is Zero but Goals not zero
             # print("Environment\n" + str(Env))
             if Environment[Now[0]][Now[1]] == 3:
                 Goals.append(Now)
