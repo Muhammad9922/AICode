@@ -11,6 +11,12 @@ class MainFuntion:
 
     @staticmethod
     def getPositionInitially(Env):
+        """
+        Gets the initial position of Agent in Array of maze
+        :param Env: Maze array
+        :return: AgentInitialPosition, Number_Of_Goal, Positions_Of_Goal  # Return Values
+
+        """
         # The following funtion is used to get the Position of Agent in the array
         AgentInitialPosition = np.where(np.array(Env) == 2)  # Get array with Position of Agent
         if len(AgentInitialPosition[0]) > 1:  # Checking if there are more than one agent in Array
@@ -80,8 +86,14 @@ class MainFuntion:
     @staticmethod
     def bfs(Environment: np.array, initialPosition: list, numberOfGoal: int = 0):
         """
-        Breadth First Search has the policy of First Come First Go. This essentially check most of the places in the
-        environment
+        Breadth-First Search (BFS) is a versatile graph traversal algorithm that systematically explores tree or
+        graph structures level by level, starting from the initial node and moving outward. Utilizing a queue-based
+        approach, BFS ensures that all nodes at a particular level are visited before progressing to the next level.
+        Widely applied in network routing, social network analysis, and web crawling, BFS guarantees the shortest
+        path in unweighted graphs, demonstrating its efficacy in scenarios where optimality and efficiency are
+        paramount. With a time complexity of (O(V + E)\) in a graph with \(V\) vertices and \(E\) edges,
+        BFS's simplicity and completeness make it a fundamental tool in computer science and beyond.
+
         :param Environment: Maze in form of list or array
         :param initialPosition: Initial Position of Agent
         :param numberOfGoal: Numbers of Goals in the environment
@@ -139,6 +151,10 @@ class MainFuntion:
         return Goals, Frames, History
 
     def printing_out(self):
+        """
+        The funtion is used to print the steps taken by the Algorithm
+        :return: Animation Funtion
+        """
         if self.verbose > 0:
             print("Animating Steps Taken By The Algorithm")
         _, frames, _ = self.returner()
@@ -155,6 +171,12 @@ class MainFuntion:
 
     @staticmethod
     def printP(Environment, Path):
+        """
+        This funtion is used to Animate a specific path that can be given by param Path
+        :param Environment: Maze array
+        :param Path: Path taken
+        :return: ani
+        """
         frames = []
         Path = Path[::-1]
         for i in Path:
@@ -172,6 +194,10 @@ class MainFuntion:
         return ani
 
     def get_best_path(self):
+        """
+        This funtion is deprecated
+        :return: Cleaned Path
+        """
         if self.verbose > 0:
             print("Attempting To Get The Best Path From The History")
         _, _, history = self.out
@@ -198,6 +224,11 @@ class MainFuntion:
 
     @staticmethod
     def get_neighbors(position):
+        """
+        Funtion is used to get the neighbouring indxes of an index
+        :param position: Index whose position is required
+        :return: [Right, Left, Below, Above]
+        """
         # Helper function to get neighboring positions
         return [
             [position[0], position[1] + 1],  # Right
@@ -208,6 +239,21 @@ class MainFuntion:
 
     @staticmethod
     def dfs(Environment: np.array, initialPosition: list, numberOfGoal: int = 0):
+        """Depth-First Search (DFS) is a graph traversal algorithm commonly used to explore and analyze structures
+        like maze. The algorithm starts from a designated node, known as the "root" in trees,
+        and systematically explores as deeply as possible along each branch before backtracking. DFS can be
+        implemented using a stack or recursion, maintaining a record of visited nodes to avoid revisiting them. Its
+        applications range from maze solving to identifying connected components in undirected graphs and performing
+        topological sorting in directed acyclic graphs. While DFS is not always optimal for finding the shortest
+        path, its simplicity and efficiency make it a fundamental algorithm with a time complexity of O(V + E),
+        where V is the number of vertices and E is the number of edges in the graph.
+
+        :param Environment: Maze array
+        :param initialPosition: initial Position of agent
+        :param numberOfGoal: Number of Goals in the array
+        :raises: NoPathFound: If the frontier is empty with the goal not found
+        :returns: Goals, Frames, History
+        """
         Frontier = []
         History = []
         Goals = []
@@ -263,6 +309,21 @@ class MainFuntion:
 
     @staticmethod
     def gbfs(Environment: np.array, initialPosition: list, Positions_of_goals):
+        """
+        Greedy Best-First Search (GBFS) is a graph traversal algorithm used for pathfinding, particularly in
+        scenarios where a heuristic can guide the search. Unlike traditional search algorithms, GBFS prioritizes
+        nodes based on heuristic evaluations. The algorithm maintains a priority queue, selecting nodes with the
+        lowest heuristic values, indicating their proximity to the goal. GBFS continues to expand nodes until the
+        goal is reached or the entire space is explored. While GBFS may not guarantee optimality, its efficiency
+        relies on the quality of the heuristic function. When the heuristic accurately estimates the true cost,
+        GBFS can quickly find solutions. Notably applied in route planning, robotics, and games, GBFS is part of the
+        family of informed search algorithms, offering an effective approach to navigating large state spaces.
+
+        :param Environment: Maze array
+        :param initialPosition: Position of agent
+        :param Positions_of_goals: Positions of Goals
+        :return: Positions_of_goals, Frames, History
+        """
         Frontier = [[initialPosition][0]]
         History = []
         Num_Goals = len(Positions_of_goals)
