@@ -35,6 +35,12 @@ class MainFuntion:
         return AgentInitialPosition, Number_Of_Goal, Positions_Of_Goal  # Return Values
 
     def __init__(self, Environment, module: str = 'dfs', verbose=1):  # Initialization Funtion for class
+        """
+        :raise Errors.FuntionNotFound: If funtion is not found
+        :param Environment: Maze Array
+        :param module: Algorithm
+        :param verbose: Printing Settings
+        """
         self.verbose = verbose  # Getting Value For Verbose
         self.module = module  # Getting the Module or Funtion
         self.out = None  # Initializing out
@@ -155,18 +161,18 @@ class MainFuntion:
         The funtion is used to print the steps taken by the Algorithm
         :return: Animation Funtion
         """
-        if self.verbose > 0:
+        if self.verbose > 0:                                    # Checking the Verbose
             print("Animating Steps Taken By The Algorithm")
-        _, frames, _ = self.returner()
-        fig, ax = plt.subplots()
-        im = ax.imshow(frames[0], interpolation='none')
+        _, frames, _ = self.returner()                          # Getting Data
+        fig, ax = plt.subplots()                                # Plotting
+        im = ax.imshow(frames[0], interpolation='none')         # Showing Image
 
-        def update(i):
+        def update(i):                                          # Updating Funtion
             im.set_array(frames[i])
             return im,
 
         ani = animation.FuncAnimation(fig, update, frames=len(frames), interval=300, blit=True)
-        plt.show()
+        plt.show()                                              # Showing Plot
         return ani
 
     @staticmethod
@@ -177,20 +183,20 @@ class MainFuntion:
         :param Path: Path taken
         :return: ani
         """
-        frames = []
-        Path = Path[::-1]
-        for i in Path:
-            Environment[i[0]][i[1]] = 4
-            frames.append(copy.deepcopy(Environment))
-        fig, ax = plt.subplots()
-        im = ax.imshow(frames[0], interpolation='none')
+        frames = []                                         # Initializing Empty Frames Set
+        Path = Path[::-1]                                   # Reversing Path Set
+        for i in Path:                                      # Looping
+            Environment[i[0]][i[1]] = 4                     # Setting the new Value as 4
+            frames.append(copy.deepcopy(Environment))       # Appending to Frame
+        fig, ax = plt.subplots()                            # Plotting
+        im = ax.imshow(frames[0], interpolation='none')     # Showing Funtion
 
-        def update(ix):
+        def update(ix):                                     # Update Funtion
             im.set_array(frames[ix])
             return im,
 
         ani = animation.FuncAnimation(fig, update, frames=len(frames), interval=300, blit=True)
-        plt.show()
+        plt.show()                                          # Show
         return ani
 
     def get_best_path(self):
@@ -198,24 +204,24 @@ class MainFuntion:
         This funtion is deprecated
         :return: Cleaned Path
         """
-        if self.verbose > 0:
+        if self.verbose > 0:                                # Printing Funtion
             print("Attempting To Get The Best Path From The History")
-        _, _, history = self.out
+        _, _, history = self.out                            # Returning Funtion Call
         start = [history[0]]
         path = [history[-1]]
         BackH = history[::-1]           # Reverse of History
         for i in path:
-            N = self.get_neighbors(i)
-            if self.verbose > 1:
+            N = self.get_neighbors(i)                       # Get Neighbors
+            if self.verbose > 1:                            # Checking Verbose
                 print(f"Path : {path}", f"BackH: {BackH}")
                 print(f"Neighbors: {N}")
-            BackH.pop(BackH.index(i))
+            BackH.pop(BackH.index(i))                       # Popping Done
             for n in N:
                 if n in BackH and n not in path:
-                    path.append(n)
+                    path.append(n)                          # Appending to Path
             if path[-1] in start:
                 break
-        if self.verbose > 1:
+        if self.verbose > 1:                                # Printing
             print(BackH)
         if self.verbose > 1:
             print(f"We have removed {len(history) - len(path)} Steps.")
@@ -223,7 +229,7 @@ class MainFuntion:
         return path
 
     @staticmethod
-    def get_neighbors(position):
+    def get_neighbors(position):                             # Getting Neighbours
         """
         Funtion is used to get the neighbouring indxes of an index
         :param position: Index whose position is required
@@ -231,10 +237,10 @@ class MainFuntion:
         """
         # Helper function to get neighboring positions
         return [
-            [position[0], position[1] + 1],  # Right
-            [position[0], position[1] - 1],  # Left
-            [position[0] + 1, position[1]],  # Below
-            [position[0] - 1, position[1]]  # Above
+            [position[0], position[1] + 1],                     # Right
+            [position[0], position[1] - 1],                     # Left
+            [position[0] + 1, position[1]],                     # Below
+            [position[0] - 1, position[1]]                      # Above
         ]
 
     @staticmethod
