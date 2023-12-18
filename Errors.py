@@ -32,10 +32,16 @@ class MultipleAgentsFound(Exception):
 
 
 class NoPathFound(Exception):
+    """
+    There is no path in the given Maze
+    """
     pass
 
 
 class FuntionNotFound(Exception):
+    """
+    The function being called is either not available or there is an error in the instance
+    """
     def __init__(self, message="Algorithm Not Found"):
         super().__init__(message)
         assert isinstance(message, str)
