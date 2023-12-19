@@ -281,7 +281,7 @@ class MainFuntion:
             Env[Now[0]][Now[1]] = 4
             Frames.append(np.array(copy.deepcopy(Env)))
             if numberOfGoal == 0:
-                break
+                break           # Breaking
             Frontier = Frontier[:-1]
             # Checking Right
             if Now[1] + 1 < Environment.shape[1]:
