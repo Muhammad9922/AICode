@@ -34,63 +34,41 @@ class MainFuntion:
             raise Errors.NoAgentFound()  # Raise Error if there is no agent
         return AgentInitialPosition, Number_Of_Goal, Positions_Of_Goal  # Return Values
 
-    def __init__(self, Environment, module: str = 'dfs', verbose=1):  # Initialization Funtion for class
+    def __init__(self, Environment, verbose=1):  # Initialization Funtion for class
         """
         :raise Errors.FuntionNotFound: If funtion is not found
         :param Environment: Maze Array
-        :param module: Algorithm
         :param verbose: Printing Settings
         """
         self.verbose = verbose  # Getting Value For Verbose
-        self.module = module  # Getting the Module or Funtion
         self.out = None  # Initializing out
-        (self.InitialPosition, self.num_goal,
-         self.Position_Of_Goals) = self.getPositionInitially(np.array(Environment))  # Getting All Values Required
+        try:
+            (self.InitialPosition, self.num_goal,
+             self.Position_Of_Goals) = self.getPositionInitially(np.array(Environment))  # Getting All Values Required
+        except ValueError:
+            raise Errors.EnvironmentError("The rows in the Environment are heterogeneous")
         self.Environment = Environment  # Setting the Environment
 
         # Printing Info:
-        if self.verbose == 0:                           # If verbose is 0
+        if self.verbose == 0:  # If verbose is 0
             print("Starting....")
-        elif self.verbose == 1:                         # If verbose is 1
+        elif self.verbose == 1:  # If verbose is 1
             Time = time.localtime()
-            print(f"Starting at {Time[3]}:{Time[4]}:{Time[5]}; {Time[2]}-{Time[1]}-{Time[0]}")      # Time
-            print(f"Mode: {module}")                                                                # Module
-        elif self.verbose == 3:                         # If verbose is 3
+            print(f"Starting at {Time[3]}:{Time[4]}:{Time[5]}; {Time[2]}-{Time[1]}-{Time[0]}")  # Time
+        elif self.verbose == 3:  # If verbose is 3
             Time = time.localtime()
-            print(f"Starting at {Time[3]}:{Time[4]}:{Time[5]}; {Time[2]}-{Time[1]}-{Time[0]}")      # Time
-            print(f"Mode: {module}")                                                                # Module
+            print(f"Starting at {Time[3]}:{Time[4]}:{Time[5]}; {Time[2]}-{Time[1]}-{Time[0]}")  # Time
             print("\n\n\n")
-            print(Environment)                                                                      # Maze
+            print(Environment)  # Maze
             print("\n\n\n")
-            print("Initial Position Of Agent: " + str(self.InitialPosition))                        # InitialPosition
-            print("Number of Goals: " + str(self.num_goal))                                         # Number of Goals
-            print("Positions of Goals: " + str(self.Position_Of_Goals))                             # Positions of Goals
+            print("Initial Position Of Agent: " + str(self.InitialPosition))  # InitialPosition
+            print("Number of Goals: " + str(self.num_goal))  # Number of Goals
+            print("Positions of Goals: " + str(self.Position_Of_Goals))  # Positions of Goals
             print("\n\n\n")
         else:
-            print("Verbose Error")                                                                  # Some Error
+            print("Verbose Error")  # Some Error
 
-        # Setting Algorithm
-        if self.module.lower() == 'bfs':
-            self.out = self.bfs(np.array(self.Environment), self.InitialPosition, self.num_goal)
-        elif self.module.lower() == 'dfs':
-            self.out = self.dfs(np.array(self.Environment), self.InitialPosition, self.num_goal)
-        elif self.module.lower() == 'gbfs':
-            if not self.Position_Of_Goals:
-                raise ValueError("Position of Goals Not Defined")  # Position of Goals is Required for this
-            self.out = self.gbfs(np.array(self.Environment), self.InitialPosition, self.Position_Of_Goals)
-        else:
-            raise Errors.FuntionNotFound  # If Funtion has an error
-
-    def returner(self):
-        """
-        Returns all the values for the sake of further use
-        :return: Tuple of data Values as Goals, Frames, History
-        :rtype: tuple
-        """
-        return self.out
-
-    @staticmethod
-    def bfs(Environment: np.array, initialPosition: list, numberOfGoal: int = 0):
+    def bfs(self):
         """
         Breadth-First Search (BFS) is a versatile graph traversal algorithm that systematically explores tree or
         graph structures level by level, starting from the initial node and moving outward. Utilizing a queue-based
@@ -100,11 +78,10 @@ class MainFuntion:
         paramount. With a time complexity of (O(V + E)\) in a graph with \(V\) vertices and \(E\) edges,
         BFS's simplicity and completeness make it a fundamental tool in computer science and beyond.
 
-        :param Environment: Maze in form of list or array
-        :param initialPosition: Initial Position of Agent
-        :param numberOfGoal: Numbers of Goals in the environment
-        :return: Tuple of data Values as Goals, Frames, History
         """
+        Environment = np.array(self.Environment)
+        numberOfGoal = self.num_goal
+        initialPosition = self.InitialPosition
         Frontier = []  # Initializing Frontier Set
         History = []  # Initializing History Set
         Goals = []  # Initializing Goals Set
@@ -113,8 +90,10 @@ class MainFuntion:
         Frames.append(np.array(copy.deepcopy(Env)))  # Appending to Frames set for representation of start of Maze
         Frontier.append(initialPosition)  # Appending Initial Position to Frontier
         while numberOfGoal != 0:  # While there are more goals
-            Now = Frontier[0]  # Now value is the first Value from the frontier
-
+            try:
+                Now = Frontier[0]  # Now value is the first Value from the frontier
+            except IndexError:
+                Errors.NoPathFound()
             # Checking if the current Value is Goal
             if Environment[Now[0]][Now[1]] == 3:  # 3 is Goal
                 Goals.append(Now)  # Appending to Goal Set
@@ -154,25 +133,26 @@ class MainFuntion:
                     if Above not in History:
                         Frontier.append(Above)
 
-        return Goals, Frames, History
+        self.out = Goals, Frames, History
 
     def printing_out(self):
         """
         The funtion is used to print the steps taken by the Algorithm
         :return: Animation Funtion
         """
-        if self.verbose > 0:                                    # Checking the Verbose
+        if self.verbose > 0:  # Checking the Verbose
             print("Animating Steps Taken By The Algorithm")
-        _, frames, _ = self.returner()                          # Getting Data
-        fig, ax = plt.subplots()                                # Plotting
-        im = ax.imshow(frames[0], interpolation='none')         # Showing Image
+        _, frames, _ = self.out
+        # Getting Data
+        fig, ax = plt.subplots()  # Plotting
+        im = ax.imshow(frames[0], interpolation='none')  # Showing Image
 
-        def update(i):                                          # Updating Funtion
+        def update(i):  # Updating Funtion
             im.set_array(frames[i])
             return im,
 
         ani = animation.FuncAnimation(fig, update, frames=len(frames), interval=300, blit=True)
-        plt.show()                                              # Showing Plot
+        plt.show()  # Showing Plot
         return ani
 
     @staticmethod
@@ -183,20 +163,20 @@ class MainFuntion:
         :param Path: Path taken
         :return: ani
         """
-        frames = []                                         # Initializing Empty Frames Set
-        Path = Path[::-1]                                   # Reversing Path Set
-        for i in Path:                                      # Looping
-            Environment[i[0]][i[1]] = 4                     # Setting the new Value as 4
-            frames.append(copy.deepcopy(Environment))       # Appending to Frame
-        fig, ax = plt.subplots()                            # Plotting
-        im = ax.imshow(frames[0], interpolation='none')     # Showing Funtion
+        frames = []  # Initializing Empty Frames Set
+        Path = Path[::-1]  # Reversing Path Set
+        for i in Path:  # Looping
+            Environment[i[0]][i[1]] = 4  # Setting the new Value as 4
+            frames.append(copy.deepcopy(Environment))  # Appending to Frame
+        fig, ax = plt.subplots()  # Plotting
+        im = ax.imshow(frames[0], interpolation='none')  # Showing Funtion
 
-        def update(ix):                                     # Update Funtion
+        def update(ix):  # Update Funtion
             im.set_array(frames[ix])
             return im,
 
         ani = animation.FuncAnimation(fig, update, frames=len(frames), interval=300, blit=True)
-        plt.show()                                          # Show
+        plt.show()  # Show
         return ani
 
     def get_best_path(self):
@@ -204,24 +184,24 @@ class MainFuntion:
         This funtion is deprecated
         :return: Cleaned Path
         """
-        if self.verbose > 0:                                # Printing Funtion
+        if self.verbose > 0:  # Printing Funtion
             print("Attempting To Get The Best Path From The History")
-        _, _, history = self.out                            # Returning Funtion Call
+        _, _, history = self.out  # Returning Funtion Call
         start = [history[0]]
         path = [history[-1]]
-        BackH = history[::-1]           # Reverse of History
+        BackH = history[::-1]  # Reverse of History
         for i in path:
-            N = self.get_neighbors(i)                       # Get Neighbors
-            if self.verbose > 1:                            # Checking Verbose
+            N = self.get_neighbors(i)  # Get Neighbors
+            if self.verbose > 1:  # Checking Verbose
                 print(f"Path : {path}", f"BackH: {BackH}")
                 print(f"Neighbors: {N}")
-            BackH.pop(BackH.index(i))                       # Popping Done
+            BackH.pop(BackH.index(i))  # Popping Done
             for n in N:
                 if n in BackH and n not in path:
-                    path.append(n)                          # Appending to Path
+                    path.append(n)  # Appending to Path
             if path[-1] in start:
                 break
-        if self.verbose > 1:                                # Printing
+        if self.verbose > 1:  # Printing
             print(BackH)
         if self.verbose > 1:
             print(f"We have removed {len(history) - len(path)} Steps.")
@@ -229,7 +209,7 @@ class MainFuntion:
         return path
 
     @staticmethod
-    def get_neighbors(position):                             # Getting Neighbours
+    def get_neighbors(position):  # Getting Neighbours
         """
         Funtion is used to get the neighbouring indxes of an index
         :param position: Index whose position is required
@@ -237,14 +217,13 @@ class MainFuntion:
         """
         # Helper function to get neighboring positions
         return [
-            [position[0], position[1] + 1],                     # Right
-            [position[0], position[1] - 1],                     # Left
-            [position[0] + 1, position[1]],                     # Below
-            [position[0] - 1, position[1]]                      # Above
+            [position[0], position[1] + 1],  # Right
+            [position[0], position[1] - 1],  # Left
+            [position[0] + 1, position[1]],  # Below
+            [position[0] - 1, position[1]]  # Above
         ]
 
-    @staticmethod
-    def dfs(Environment: np.array, initialPosition: list, numberOfGoal: int = 0):
+    def dfs(self):
         """Depth-First Search (DFS) is a graph traversal algorithm commonly used to explore and analyze structures
         like maze. The algorithm starts from a designated node, known as the "root" in trees,
         and systematically explores as deeply as possible along each branch before backtracking. DFS can be
@@ -254,24 +233,24 @@ class MainFuntion:
         path, its simplicity and efficiency make it a fundamental algorithm with a time complexity of O(V + E),
         where V is the number of vertices and E is the number of edges in the graph.
 
-        :param Environment: Maze array
-        :param initialPosition: initial Position of agent
-        :param numberOfGoal: Number of Goals in the array
         :raises: NoPathFound: If the frontier is empty with the goal not found
         :returns: Goals, Frames, History
         """
-        Frontier = []                                           # Initializing Frontier
-        History = []                                            # Initializing History
-        Goals = []                                              # Initializing Goals
-        Frames = []                                             # Initializing Frames
-        Env = copy.deepcopy(Environment)                        # Deep-copying Environment
-        Frames.append(np.array(copy.deepcopy(Env)))             # Appending Frames
-        Frontier.append(initialPosition)                        # Appending Frontier
-        while numberOfGoal != 0:                                # Unless the Goals are zero
-            try:                                                # Check if the Frontier is Null
+        Environment = np.array(self.Environment)
+        initialPosition = self.InitialPosition
+        numberOfGoal = self.num_goal
+        Frontier = []  # Initializing Frontier
+        History = []  # Initializing History
+        Goals = []  # Initializing Goals
+        Frames = []  # Initializing Frames
+        Env = copy.deepcopy(Environment)  # Deep-copying Environment
+        Frames.append(np.array(copy.deepcopy(Env)))  # Appending Frames
+        Frontier.append(initialPosition)  # Appending Frontier
+        while numberOfGoal != 0:  # Unless the Goals are zero
+            try:  # Check if the Frontier is Null
                 Now = Frontier[-1]
             except IndexError:
-                raise Errors.NoPathFound()                      # If the Frontier is Zero but Goals not zero
+                raise Errors.NoPathFound()  # If the Frontier is Zero but Goals not zero
             # print("Environment\n" + str(Env))
             if Environment[Now[0]][Now[1]] == 3:
                 Goals.append(Now)
@@ -281,7 +260,7 @@ class MainFuntion:
             Env[Now[0]][Now[1]] = 4
             Frames.append(np.array(copy.deepcopy(Env)))
             if numberOfGoal == 0:
-                break           # Breaking
+                break  # Breaking
             Frontier = Frontier[:-1]
             # Checking Right
             if Now[1] + 1 < Environment.shape[1]:
@@ -311,10 +290,9 @@ class MainFuntion:
                     if Above not in History:
                         Frontier.append(Above)
 
-        return Goals, Frames, History
+        self.out = Goals, Frames, History
 
-    @staticmethod
-    def gbfs(Environment: np.array, initialPosition: list, Positions_of_goals):
+    def gbfs(self):
         """
         Greedy Best-First Search (GBFS) is a graph traversal algorithm used for pathfinding, particularly in
         scenarios where a heuristic can guide the search. Unlike traditional search algorithms, GBFS prioritizes
@@ -325,11 +303,11 @@ class MainFuntion:
         GBFS can quickly find solutions. Notably applied in route planning, robotics, and games, GBFS is part of the
         family of informed search algorithms, offering an effective approach to navigating large state spaces.
 
-        :param Environment: Maze array
-        :param initialPosition: Position of agent
-        :param Positions_of_goals: Positions of Goals
         :return: Positions_of_goals, Frames, History
         """
+        initialPosition = self.InitialPosition
+        Positions_of_goals = self.Position_Of_Goals
+        Environment = np.array(self.Environment)
         Frontier = [[initialPosition][0]]
         History = []
         Num_Goals = len(Positions_of_goals)
@@ -344,7 +322,10 @@ class MainFuntion:
                         best = abs(p[0] - i[0]) + abs(p[1] - i[1])
                         choice = i
             # Checking If Choice Is Goal
-            Env[choice[0]][choice[1]] = 4
+            try:
+                Env[choice[0]][choice[1]] = 4
+            except IndexError:
+                raise Errors.NoPathFound()
             Frames.append(copy.deepcopy(Env))
             if Environment[choice[0]][choice[1]] == 3:
                 Num_Goals -= 1
@@ -373,4 +354,26 @@ class MainFuntion:
 
             History.append(choice)
             # break
-        return Positions_of_goals, Frames, History
+        self.out = Positions_of_goals, Frames, History
+        return
+
+    def giveBestOut(self):
+        self.gbfs()
+        Goals_G, Frames_G, History_G = self.out
+        self.bfs()
+        Goals_B, Frames_B, History_B = self.out
+        self.dfs()
+        Goals_D, Frames_D, History_D = self.out
+        print(f"G: {len(History_G)}, B: {len(History_B)}, D: {len(History_D)}")
+        if len(History_G) > len(History_D) < len(History_B):
+            if self.verbose != 0:
+                print("DFS CHOSEN")
+            return Goals_D, Frames_D, History_D
+        elif len(History_D) > len(History_G) < len(History_B):
+            if self.verbose != 0:
+                print("GBFS CHOSEN")
+            return Goals_G, Frames_G, History_G
+        elif len(History_G) > len(History_B) < len(History_D):
+            if self.verbose != 0:
+                print("BFS CHOSEN")
+            return Goals_B, Frames_B, History_B
