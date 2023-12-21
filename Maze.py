@@ -15,7 +15,9 @@ class MainFuntion:
         Gets the initial position of Agent in Array of maze
         :param Env: Maze array
         :return: AgentInitialPosition, Number_Of_Goal, Positions_Of_Goal  # Return Values
-
+        :raises: Errors.MultipleAgentsFound: If there are more than one agent
+        :raises: Errors.NoGoalFound: If there is no Goal in the Environment
+        :raises: Errors.NoAgentFound: If there is no agent in the Environment
         """
         # The following funtion is used to get the Position of Agent in the array
         AgentInitialPosition = np.where(np.array(Env) == 2)  # Get array with Position of Agent
@@ -36,7 +38,8 @@ class MainFuntion:
 
     def __init__(self, Environment, verbose=1):  # Initialization Funtion for class
         """
-        :raise Errors.FuntionNotFound: If funtion is not found
+        :raises Errors.FuntionNotFound: If funtion is not found
+        :raises Errors.EnvironmentInError: If all the rows are not of Equal Length
         :param Environment: Maze Array
         :param verbose: Printing Settings
         """
@@ -77,7 +80,7 @@ class MainFuntion:
         path in unweighted graphs, demonstrating its efficacy in scenarios where optimality and efficiency are
         paramount. With a time complexity of (O(V + E)) in a graph with (V) vertices and (E) edges,
         BFS's simplicity and completeness make it a fundamental tool in computer science and beyond.
-
+        :raises: Errors.NoPathFound: If no path is found
         """
         Environment = np.array(self.Environment)
         numberOfGoal = self.num_goal
@@ -303,6 +306,7 @@ class MainFuntion:
         GBFS can quickly find solutions. Notably applied in route planning, robotics, and games, GBFS is part of the
         family of informed search algorithms, offering an effective approach to navigating large state spaces.
 
+        :raises: NoPathFound: If the frontier is empty with the goal not found
         :return: Positions_of_goals, Frames, History
         """
         initialPosition = self.InitialPosition
