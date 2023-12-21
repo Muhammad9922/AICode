@@ -46,7 +46,7 @@ class MainFuntion:
             (self.InitialPosition, self.num_goal,
              self.Position_Of_Goals) = self.getPositionInitially(np.array(Environment))  # Getting All Values Required
         except ValueError:
-            raise Errors.EnvironmentError("The rows in the Environment are heterogeneous")
+            raise Errors.EnvironmentInError("The rows in the Environment are heterogeneous")
         self.Environment = Environment  # Setting the Environment
 
         # Printing Info:
