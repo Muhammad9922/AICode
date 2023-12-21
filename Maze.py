@@ -1,20 +1,18 @@
 import copy
 import time
-
 import numpy as np
+import Errors
 from matplotlib import pyplot as plt, animation
 
-import Errors
 
-
-class MainFuntion:
+class MainFunction:
 
     @staticmethod
-    def getPositionInitially(Env):
+    def getInitialPosition(Env):
         """
         Gets the initial position of Agent in Array of maze
         :param Env: Maze array
-        :return: AgentInitialPosition, Number_Of_Goal, Positions_Of_Goal  # Return Values
+        :return: AgentInitialPosition, Numbers_Of_Goal, Positions_Of_Goal  # Return Values
         :raises: Errors.MultipleAgentsFound: If there are more than one agent
         :raises: Errors.NoGoalFound: If there is no Goal in the Environment
         :raises: Errors.NoAgentFound: If there is no agent in the Environment
@@ -23,18 +21,18 @@ class MainFuntion:
         AgentInitialPosition = np.where(np.array(Env) == 2)  # Get array with Position of Agent
         if len(AgentInitialPosition[0]) > 1:  # Checking if there are more than one agent in Array
             raise Errors.MultipleAgentsFound  # More than one agent in Array
-        Number_Of_Goal = len(np.where(np.array(Env) == 3)[0])  # Checking the Number of Goals
-        if Number_Of_Goal == 0:  # If there are no goals in array
+        Numbers_Of_Goal = len(np.where(np.array(Env) == 3)[0])  # Checking the Number of Goals
+        if Numbers_Of_Goal == 0:  # If there are no goals in array
             raise Errors.NoGoalFound()  # Raising Custom Error from Errors.py
         Positions_Of_Goal = []  # Empty set to store Positions of Goals
-        for i in range(Number_Of_Goal):  # Looping for the number of times as Goals
+        for i in range(Numbers_Of_Goal):  # Looping for the number of times as Goals
             Positions_Of_Goal.append(
                 [np.where(np.array(Env) == 3)[0][i], np.where(np.array(Env) == 3)[1][i]])  # Appending to Goal Set
         try:
             AgentInitialPosition = [AgentInitialPosition[0][0], AgentInitialPosition[1][0]]  # Trying to Agent
         except IndexError:
             raise Errors.NoAgentFound()  # Raise Error if there is no agent
-        return AgentInitialPosition, Number_Of_Goal, Positions_Of_Goal  # Return Values
+        return AgentInitialPosition, Numbers_Of_Goal, Positions_Of_Goal  # Return Values
 
     def __init__(self, Environment, verbose=1):  # Initialization Funtion for class
         """
@@ -47,7 +45,7 @@ class MainFuntion:
         self.out = None  # Initializing out
         try:
             (self.InitialPosition, self.num_goal,
-             self.Position_Of_Goals) = self.getPositionInitially(np.array(Environment))  # Getting All Values Required
+             self.Position_Of_Goals) = self.getInitialPosition(np.array(Environment))  # Getting All Values Required
         except ValueError:
             raise Errors.EnvironmentInError("The rows in the Environment are heterogeneous")
         self.Environment = Environment  # Setting the Environment
