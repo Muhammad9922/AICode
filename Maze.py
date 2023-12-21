@@ -75,7 +75,7 @@ class MainFuntion:
         approach, BFS ensures that all nodes at a particular level are visited before progressing to the next level.
         Widely applied in network routing, social network analysis, and web crawling, BFS guarantees the shortest
         path in unweighted graphs, demonstrating its efficacy in scenarios where optimality and efficiency are
-        paramount. With a time complexity of (O(V + E)\) in a graph with \(V\) vertices and \(E\) edges,
+        paramount. With a time complexity of (O(V + E)) in a graph with (V) vertices and (E) edges,
         BFS's simplicity and completeness make it a fundamental tool in computer science and beyond.
 
         """
@@ -93,7 +93,7 @@ class MainFuntion:
             try:
                 Now = Frontier[0]  # Now value is the first Value from the frontier
             except IndexError:
-                Errors.NoPathFound()
+                raise Errors.NoPathFound()
             # Checking if the current Value is Goal
             if Environment[Now[0]][Now[1]] == 3:  # 3 is Goal
                 Goals.append(Now)  # Appending to Goal Set
